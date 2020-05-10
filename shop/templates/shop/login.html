@@ -1,0 +1,40 @@
+{% extends 'shop/base.html' %}
+
+{% block body %}
+<form method="post">
+   {% csrf_token %}
+
+
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-2">
+            <h2>Login</h2>
+        </div>
+    </div>
+
+    <div class="container justify-content-center mt-5">
+        {% if error %}
+         <div class="alert alert-danger" role="alert">
+                {{error}}
+        </div>
+        {% endif %}
+
+
+
+  <div class="form-group" >
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" placeholder="Enter your email id">
+
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Enter your password">
+  </div>
+   <div class="row justify-content-center mt-5">
+        <div class="col-md-2">
+  <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
+        </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
