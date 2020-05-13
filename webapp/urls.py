@@ -26,6 +26,13 @@ urlpatterns = [
     path('logoutuser/', views.logoutuser, name='logoutuser'),
     path('loginuser/', views.loginuser, name='loginuser'),
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+    path('reduce_cart/', views.reduce_cart, name='reduce_cart'),
+    path('increase_cart/', views.increase_cart, name='increase_cart'),
     path('delete_session/', views.delete_session, name='delete_session'),
+     path('delete_key/', views.delete_key, name='delete_key'),
+    path('update_cart/', views.update_cart, name='update_cart'),
+    path('show_quantity_cart/', views.show_quantity_cart, name='show_quantity_cart'),
+    path('cart/', views.cart, name='cart'),
+    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

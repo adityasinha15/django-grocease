@@ -25,7 +25,34 @@
       </li>
         {% if user.is_authenticated %}
 
-        <li class="nav-item">
+        
+
+
+
+        <div class="dropdown">
+          <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Hello {{user.first_name|title}}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+
+            <a class="dropdown-item" href="#">Profile</a>
+            
+           
+              <a href="#" onclick="$('#signOutBtn').click()" class="dropdown-item">Logout</a>
+             <form method="post" action="{% url 'logoutuser' %}" style="display: none;">
+                  {% csrf_token %}
+              <button type="submit" class="nav-link" id="signOutBtn">Logout</button>
+                 </form>
+    
+
+            
+          </div>
+        </div>
+
+
+
+       <!---- <li class="nav-item">
              <b> <a class="nav-link" href="#">Hello {{user.first_name|title}}</a></b>
       </li>
          <li class="nav-item">
@@ -35,7 +62,7 @@
               <button type="submit" class="nav-link" id="signOutBtn">Logout</button>
                  </form>
       </li>
-
+    -->
         {% else %}
 
 
@@ -49,6 +76,11 @@
 
         {% endif %}
     </ul>
+    <a href="{% url 'cart' %}"><button type="button" id="popovercart" class="btn btn-secondary mx-2" >Cart(<span id="cart">0</span>)</button></a>
+        
+
+</button></a>
+</button>
 
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -65,6 +97,13 @@
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
 {% block js %}{% endblock %}
 
 </html>

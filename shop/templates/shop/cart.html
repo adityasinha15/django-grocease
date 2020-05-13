@@ -1,0 +1,294 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% load index %}
+{% block body %}
+
+
+
+<div class="container my-4">
+    <h3>Cart Details</h3>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+           {{error}}
+   </div>
+   {% endif %}
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Product</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        
+        {% for i in length %}
+      <tr>
+        <th scope="row">1</th>
+        <td>{{names|index:i}}</td>
+        <td>
+          <span>
+          <button id='{{cart|index:i|index:0}}minus' class='btn btn-danger minus' style="display: none;" data-target="{{cart|index:i|index:0}}" onclick="reduce_cart({{cart|index:i|index:0}})">-</button> <span id='cartvalue{{cart|index:i|index:0}}' style="display: none;"> 0 </span> <button id='{{cart|index:i|index:0}}plus' class='btn btn-success plus ' style="display: none;" onclick="increase_cart({{cart|index:i|index:0}})"> + </button>
+        <div id='editbtn{{cart|index:i|index:0}}'> <b>{{cart|index:i|index:1}}  </b><button class="btn btn-sm btn-warning"   data-target="{{cart|index:i|index:0}}" onclick="show_edit({{cart|index:i|index:0}})"><span>   </span>  Edit</button></div>
+        <div id='donebtn{{cart|index:i|index:0}}' style="display: none;"> <button class="btn btn-sm btn-warning"   data-target="{{cart|index:i|index:0}}" onclick="done_edit({{cart|index:i|index:0}})"><span>   </span>  Done</button></div>
+        
+         <button class="btn btn-warning add_to_cart" data-target="{{cart|index:i|index:0}}" style="display: none;" id="add_to_cart{{cart|index:i|index:0}}">Add to cart</button>
+      
+        </span> 
+        </td>
+        <td><span style="text-decoration: line-through;">{{mrps|index:i}} </span><span> <b>{{prices|index:i}}</b></span> </td>
+      </tr>
+      {% endfor %}
+     <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td><h5>Rs {{total}}</h5></td>
+     </tr>
+    </tbody>
+    </table>
+    <div class="text-right">  
+  <button class="btn btn-success" id="nextbtn">Proceed</button>
+</div>
+
+
+<form method="POST" action="{% url 'cart' %}" id="address" style="display: none;">
+  {%csrf_token%}
+  <h3 class="my-4">Enter shipping details</h3>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">First Name</label>
+      <input type="text" class="form-control" id="inputEmail4" placeholder="Enter your first name" name="fname">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputPassword4">Last Name</label>
+      <input type="text" class="form-control" id="inputPassword4" placeholder="Enter your last name" name="lname">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="inputCity">Contact</label>
+      <input type="text" class="form-control" id="inputCity" name="contact">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputAddress">Address Line 1</label>
+    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="address1">
+  </div>
+  <div class="form-group">
+    <label for="inputAddress2">Address Line 2</label>
+    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" name="address2">
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputCity">City</label>
+      <input type="text" class="form-control" id="inputCity" name="city">
+    </div>
+    <div class="form-group col-md-4">
+      <label for="inputState">State</label>
+      <select id="inputState" class="form-control" name="state">
+        <option selected>Choose...</option>
+        <option>Uttar Pradesh</option>
+        <option>Delhi</option>
+        <option>Himachal Pradesh</option>
+        <option>Kerala</option>
+      </select>
+    </div>
+    <div class="form-group col-md-2">
+      <label for="inputZip">Zip</label>
+      <input type="text" class="form-control" id="inputZip" name="zipcode">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputCity">Payment</label>
+      <input type="radio" selected='selected'>COD
+    </div>
+  
+  <button type="submit" class="btn btn-primary"> Place Order</button>
+</form>
+
+
+
+
+</div>
+{% endblock %}
+
+
+
+{% block js %}
+
+<script>
+ 
+$('#nextbtn').on('click', function(){
+  document.getElementById('address').style.display = 'inline'
+  document.getElementById('nextbtn').style.display = 'None'
+})
+
+  $(document).ready(function(){
+    update_cart()     
+
+
+    $('.add_to_cart').on('click', function(){
+      id = $(this).attr('data-target')
+      document.getElementById('add_to_cart'+id).style.display = 'none';
+      document.getElementById(id+'plus').style.display = 'inline';
+      document.getElementById(id+'minus').style.display = 'inline';
+      document.getElementById('cartvalue'+id).style.display = 'inline';
+      document.getElementById('donebtn'+id).style.display = 'inline';
+      
+     
+     $.ajax({
+      type:'GET',
+      url:'{% url 'add_to_cart' %}',
+      data:{'p_id':id},
+      success:function(data){
+        
+       $('#cartvalue'+id).text(data);
+       update_cart()
+      }
+            
+     })
+  
+    })
+   
+  });
+
+
+ 
+
+
+  function reduce_cart(id){
+    $.ajax({
+      type:'GET',
+      url:'{% url 'reduce_cart' %}',
+      data:{'p_id':id},
+      success:function(data){
+       if(data >0)
+       {
+        $('#cartvalue'+id).text(data);
+       }
+        else
+        {
+
+        document.getElementById('add_to_cart'+id).style.display = 'inline';
+        document.getElementById(id+'plus').style.display = 'none';
+        document.getElementById(id+'minus').style.display = 'none';
+        document.getElementById('cartvalue'+id).style.display = 'none';
+        document.getElementById('donebtn'+id).style.display = 'none';
+          }
+          update_cart()
+       }
+      
+
+       
+      
+      
+      
+            
+     })
+     
+  }
+
+  function increase_cart(id){
+
+
+    $.ajax({
+      type:'GET',
+      url:'{% url 'increase_cart' %}',
+      data:{'p_id':id},
+      success:function(data){
+
+      
+       $('#cartvalue'+id).text(data);
+       update_cart()
+      }
+            
+     })
+      }
+function update_cart(){
+
+$.ajax({
+  type:'GET',
+  url:'{% url 'update_cart' %}',
+  success:function(data){
+    console.log('data')
+    console.log(data)
+   $('#cart').text(data);
+  }
+
+})
+}
+
+
+function show_edit(p_id)
+{
+  document.getElementById(p_id+'minus').style.display = 'inline';
+  document.getElementById(p_id+'plus').style.display = 'inline';
+  document.getElementById('cartvalue'+p_id).style.display = 'inline';
+  document.getElementById('editbtn'+p_id).style.display = 'None';
+  document.getElementById('donebtn'+p_id).style.display = 'inline';
+
+  $.ajax({
+
+  type:'GET',
+  url:'{% url 'show_quantity_cart' %}',
+  data:{'p_id':p_id},
+  success:function(data){
+    console.log('data')
+    console.log(data)
+    if(data >=0)
+    {
+   $('#cartvalue'+p_id).text(data);
+    }
+  }
+
+})
+
+}
+
+
+
+function done_edit(p_id)
+{
+  document.getElementById(p_id+'minus').style.display = 'None';
+  document.getElementById(p_id+'plus').style.display = 'None';
+  document.getElementById('cartvalue'+p_id).style.display = 'None';
+  document.getElementById('editbtn'+p_id).style.display = 'inline';
+  document.getElementById('donebtn'+p_id).style.display = 'None';
+
+  $.ajax({
+
+  type:'GET',
+  url:'{% url 'show_quantity_cart' %}',
+  data:{'p_id':p_id},
+  success:function(data){
+    console.log('data')
+    console.log(data)
+    if(data >=0)
+    {
+   
+   document.getElementById('editbtn'+p_id).innerText=data;  
+   
+     }
+     update_cart()
+  }
+
+})
+
+}
+
+
+
+
+   
+</script>
+
+{% endblock %}
+
+
+

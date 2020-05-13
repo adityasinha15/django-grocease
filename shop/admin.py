@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, SubCategory
+from .models import Category, Product, SubCategory, Order, OrderItem
 
 class Prod(admin.ModelAdmin):
     readonly_fields = ('p_id',)
@@ -14,4 +14,6 @@ admin.site.register(Product, Prod)
 
 admin.site.register(Category, Cat)
 admin.site.register(SubCategory, Scat)
+admin.site.register(Order)
+admin.site.register(OrderItem)
 
