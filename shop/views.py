@@ -71,17 +71,29 @@ def loginuser(request):
                 return redirect('home')
 
 
+
+def quantity_check(p_id, quantity):
+    available = Product.objects.filter(p_id=p_id).values_list('available_quantity', flat=True)[0]
+    if available>=quantity:
+        return True
+    else:
+        return False
+
+
 def add_to_cart(request):
     p_id = request.GET.get('p_id')
     if request.method == 'GET':
         if 'cart' not in request.session.keys():
             request.session['cart'] = dict()
-            request.session['cart'][p_id] = 1
-            print(request.session['cart'])
-            print(request.session.items())
-            request.session.modified = True
-            data = request.session['cart'][p_id]
-            return HttpResponse(data)
+            if quantity_check(p_id, 1):
+                request.session['cart'][p_id] = 1
+                print(request.session['cart'])
+                print(request.session.items())
+                request.session.modified = True
+                data = request.session['cart'][p_id]
+                return HttpResponse(data)
+            else:
+                return HttpResponse('Not available')
         else:
             print(request.session['cart'])
             if has_key(request.session['cart'], p_id):
@@ -118,12 +130,14 @@ def increase_cart(request):
     p_id = request.GET.get('p_id')
     temp = request.session['cart'][p_id]
     newValue = temp+1
-    request.session['cart'][p_id] = newValue 
-    request.session.modified = True
-    print(request.session['cart'])
-    data = request.session['cart'][p_id]
-    return HttpResponse(data)
-
+    if quantity_check(p_id, newValue):
+        request.session['cart'][p_id] = newValue 
+        request.session.modified = True
+        print(request.session['cart'])
+        data = request.session['cart'][p_id]
+        return HttpResponse(data)
+    else:
+        return HttpResponse('Not available')
 def has_key(cart , p_id):
     print(cart.keys())
     if p_id in cart.keys():
@@ -176,14 +190,18 @@ def cart(request):
                 quant = cart[i]
                 tot = price[0]*quant
                 total += tot
+            cart_length = length
             length = range(length)
             cart = list(cart.items())
             for i in  range(len(mrps)):
                 saves.append(mrps[i]-prices[i])
-        
-            return render(request, 'shop/cart.html', {'cart':cart, 'names':names, 'length':length, 'prices':prices, 'mrps':mrps, 'total':total})
+            
+            if cart_length !=0:
+                return render(request, 'shop/cart.html', {'cart':cart, 'names':names, 'length':length, 'prices':prices, 'mrps':mrps, 'total':total})
+            else:
+                return render(request, 'shop/cart.html', {'error': 'no items in your cart'})
         except KeyError:
-            return HttpResponse("No items in your cart")
+            return render(request, 'shop/cart.html', {'error': 'no items in your cart'})
     else:
         if request.user.is_authenticated:
             try:
@@ -220,15 +238,72 @@ def cart(request):
                     print(item)
                     order.items.add(item)
                     print(order.items)
+                    p_quantity = Product.objects.filter(p_id=p_id).values_list('available_quantity', flat=True)
+                    p_quantity = p_quantity[0]
+                    new_quantity = p_quantity - quantity
+                    Product.objects.filter(p_id=p_id).update(available_quantity= new_quantity)
                 del request.session['cart']
                 request.session.modified = True
                 return HttpResponse('Done')
             except ValueError:
                 return redirect('cart')
         else:
-            return render(request, 'shop/cart.html', {'error':'Please login to proceed'})
+            return render(request, 'shop/login.html', {'error':'Please login to proceed'})
                 
 
 
+def remove_product(request):
+    p_id = request.GET.get('p_id')
+    try:
+        request.session['cart'].pop(p_id)
+        request.session.modified = True
+        print(request.session['cart'])
+        return HttpResponse(0)
+    except KeyError:
+        return render(request, 'shop/cart.html')
+
+def empty_cart(request):
+    try:
+        del request.session['cart']
+        return HttpResponse(0)
+    except KeyError:
+        return HttpResponse(1)
+
+def product_detail(request, productId):
+    product = Product.objects.get(p_id = productId)
+    
+    return render(request, 'shop/product_detail.html', {"product":product})
 
 
+
+"""def buy_now(request, p_id):
+    
+    if request.method == 'POST':
+        if 'cart' not in request.session.keys():
+            request.session['cart'] = dict()
+            if quantity_check(p_id, 1):
+                request.session['cart'][p_id] = 1
+                print(request.session['cart'])
+                print(request.session.items())
+                request.session.modified = True
+                data = request.session['cart'][p_id]
+                return redirect('cart')
+            else:
+                return render(request, 'product_detail.html')
+        else:
+            print(request.session['cart'])
+            if has_key(request.session['cart'], p_id):
+                print(request.session['cart'][p_id])
+                temp = request.session['cart'].get(p_id) + 1
+                print(temp)
+                request.session['cart'][p_id] = temp
+                request.session.modified = True
+                print(request.session['cart'], 'if')
+                
+            else:
+                request.session['cart'][p_id] = 1
+                request.session.modified = True
+                print(request.session['cart'], 'else')
+            data = request.session['cart'][p_id]
+            return redirect('cart')
+"""

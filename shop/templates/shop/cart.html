@@ -6,14 +6,22 @@
 
 
 
+
+{% if error %}
+<div class="container my-4">
+    <div class="jumbotron">
+      <h1 class="display-4">Oops, cart is empty!</h1>
+      <p class="lead">You have {{error}}</p>
+      <hr class="my-4">
+      <p>Browse from our wide range of products</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'home' %}" role="button">Shop More</a>
+    </div>
+</div>
+    {% else %}
 <div class="container my-4">
     <h3>Cart Details</h3>
+   <div class="text-right"><button class="btn btn-danger" onclick="empty_cart()"> Empty Cart</button></div>
 
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-           {{error}}
-   </div>
-   {% endif %}
 <table class="table">
     <thead class="thead-dark">
       <tr>
@@ -28,8 +36,13 @@
         
         {% for i in length %}
       <tr>
-        <th scope="row">1</th>
-        <td>{{names|index:i}}</td>
+        <th scope="row">1 </th>
+        <td>{{names|index:i}}
+        <span>
+          <div id='remove{{cart|index:i|index:0}}'> <button class="btn btn-sm btn-warning"   data-target="{{cart|index:i|index:0}}" onclick="remove({{cart|index:i|index:0}})">Remove</button></div>
+        
+        </span>  
+        </td>
         <td>
           <span>
           <button id='{{cart|index:i|index:0}}minus' class='btn btn-danger minus' style="display: none;" data-target="{{cart|index:i|index:0}}" onclick="reduce_cart({{cart|index:i|index:0}})">-</button> <span id='cartvalue{{cart|index:i|index:0}}' style="display: none;"> 0 </span> <button id='{{cart|index:i|index:0}}plus' class='btn btn-success plus ' style="display: none;" onclick="increase_cart({{cart|index:i|index:0}})"> + </button>
@@ -40,7 +53,10 @@
       
         </span> 
         </td>
-        <td><span style="text-decoration: line-through;">{{mrps|index:i}} </span><span> <b>{{prices|index:i}}</b></span> </td>
+        <td><span style="text-decoration: line-through;">{{mrps|index:i}} </span><span> <b>{{prices|index:i}}</b></span> 
+        
+        </td>
+      
       </tr>
       {% endfor %}
      <tr>
@@ -114,7 +130,7 @@
 
 
 
-
+{% endif %}
 </div>
 {% endblock %}
 
@@ -276,6 +292,47 @@ function done_edit(p_id)
    
      }
      update_cart()
+  }
+
+})
+
+}
+
+
+
+
+
+
+function remove(p_id)
+{
+  console.log(p_id) 
+  $.ajax({
+
+  type:'GET',
+  url:'{% url 'remove_product' %}',
+  data:{'p_id':p_id},
+  success:function(data){
+    console.log(data)
+    update_cart()
+    window.location['reload']()
+  }
+
+})
+
+}
+
+
+
+function empty_cart()
+{
+  
+  $.ajax({
+
+  type:'GET',
+  url:'{% url 'empty_cart' %}',
+  success:function(){
+    update_cart()
+    window.location['reload']()
   }
 
 })

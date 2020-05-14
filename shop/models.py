@@ -20,6 +20,9 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.name
 
+def get_upload_path(instance, filename):
+    return "%s/%s" % (instance.p_id, filename)
+
 class Product(models.Model):
 
     p_id = models.AutoField(primary_key=True)
@@ -27,7 +30,7 @@ class Product(models.Model):
     mrp = models.IntegerField()
     sp = models.IntegerField()
     desc = models.CharField(max_length=500)
-    image = models.ImageField()
+    image = models.ImageField(upload_to = get_upload_path)
     cat = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     available_quantity = models.IntegerField(default=100)
 
