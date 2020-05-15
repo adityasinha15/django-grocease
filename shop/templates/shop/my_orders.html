@@ -1,6 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 {% load mathfilters %}
+{% load index %}
 
 
 
@@ -22,7 +23,7 @@
 <div class="container my-4">
     <h3>My Orders</h3>
 <table class="table">
-    <thead>
+    <thead class="">
       <tr>
         <th scope="col">OrderId</th>
         <th scope="col">Date</th>
@@ -31,24 +32,14 @@
       </tr>
     </thead>
     <tbody>
+        {% for order, items in items.items %}
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
+        <a><th scope="row">{{order.o_id}}</th></a>
+        <td>{{order.order_date}}</td>
+        <td>{{items|index:0}}.....</td>
+        <td>{{order.grand_total}}</td>
       </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>
@@ -57,6 +48,17 @@
 
 
 
+{% endblock %}
 
+
+{% block js %}
+
+
+<script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+</script>    
 
 {% endblock %}

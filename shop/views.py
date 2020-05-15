@@ -237,9 +237,9 @@ def cart(request):
                 
                 for p_id in cart.keys():
                     quantity = cart[p_id]
-                    print(quantity)
+                    print(quantity, 'quantity')
                     price = Product.objects.filter(p_id = p_id).values_list('sp', flat=True)
-                    print(price)
+                    print(price, 'price')
                     total = price[0] * quantity
                     print(total)
                     print(cart[p_id])
@@ -289,8 +289,16 @@ def my_orders(request):
     category = Category.objects.all()
     category = list(category)
     orders = Order.objects.filter(u_id=request.user.id)
-    print(list(orders))
-    return render(request, 'shop/my_orders.html', {'category': category})
+    items = dict()
+    for order in orders:
+        p = []
+        for i in order.items.all():
+            p_id = i.p_id
+            products = Product.objects.filter(p_id = p_id).values_list('name', flat=True)[0]
+            p.append(products)
+        items[order] = p
+    print(items)
+    return render(request, 'shop/my_orders.html', {'category': category, 'orders':orders, 'items':items})
 
 """def buy_now(request, p_id):
     

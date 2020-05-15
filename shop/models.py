@@ -38,7 +38,7 @@ class Product(models.Model):
         return self.name
 
 class OrderItem(models.Model):
-    p_id = models.IntegerField()
+    p_id = models.IntegerField(default=100)
     quantity = models.IntegerField()
     price = models.IntegerField()
 
