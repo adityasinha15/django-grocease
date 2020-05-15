@@ -1,71 +1,104 @@
 {% extends 'shop/base.html' %}
-{% load subtract %}
-
+{% load static %}
+{% load mathfilters %}
 {% block body %}
 
-
 <style>
-.img-product{
-    height:400px;
-    width:400px;
+
+    .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
+
+
+
 </style>
+
+
 
 <div class="d-flex my-4" id="wrapper">
 
-    <!-- Sidebar -->
-    {% include 'shop/Sidebar.html' %}
-    <!-- /#sidebar-wrapper -->
+  <!-- Sidebar -->
+  {% include 'shop/sidebar.html' %}
+  <!-- /#sidebar-wrapper -->
+
+  <!-- Page Content -->
   
-    <!-- Page Content -->
-    <div id="page-content-wrapper" class="col">
+  <div id="page-content-wrapper" class="col">
 
-
-<div class="container row my-4">
-<div class="col">
-<img src="/media/{{product.image}}" class="img-product">
-</div>
-
-<div class="col">
-    <h2>{{product.name}}</h2>
     
-    <p><b>List Price: Rs <span style="text-decoration: line-through;">{{product.mrp}}</span></b></p>
-    <p><b>Price: Rs {{product.sp}}</b></p>
-    <p><b>You save: Rs {{product.mrp|subtract:product.sp}}</b></p>
-    <div>{{product.desc}}</div>
-    <div class="my-4">
-    <span class="mx-4">
+      
+      
+      
+         <div class="card text-center">
+            {% for j in cats %}
+        <div class="card-header">
+
+          <a href="{% url 'products' j %}"><h3>{{j}}  <span><button class="btn btn-warning">View all</button></span></h3></a>
+        </div>
+       
+     
+      <div class="my-8">
         
-        <button id="add_to_cart{{product.p_id}}" class="btn btn-warning add_to_cart"   data-target="{{product.p_id}}">Add to cart</button>
-    
-        <button id='{{product.p_id}}minus' class='btn btn-danger minus' style="display: none;" data-target="{{product.p_id}}" onclick="reduce_cart({{product.p_id}})">-</button> <span id='cartvalue{{product.p_id}}' style="display: none;"> 0 </span> <button id='{{product.p_id}}plus' class='btn btn-success plus ' style="display: none;" onclick="increase_cart({{product.p_id}})"> + </button>
-    </span>
-        <a href="{% url 'cart' %}"><button class="btn btn-success">Go to cart</button></a>
+      
+          <div class="row ">
+      
+            {% for i in products %}
+           
+           
+        <div class="col-sm-3">
+           
+          <div class="card">
+            
+            <div class="card-body">
+               
+              
+              <a href=""><img src="/media/{{i.image}}" class="img-fluid w-50 center"> <h4><span class="badge badge-success"> {{i.sp|mul:100|intdiv:i.mrp}}% off</span></h4>
+      
+                <h5 class="card-title">{{ i.name }}</h5></a>
+              <p class="card-text"> <b>Price: Rs </b><span style="text-decoration:line-through; ">  {{i.mrp}}</span> <b>{{i.sp}}</b></p>
+             
+              <div id="add_to_cart{{i.p_id}}"><a class="btn btn-warning add_to_cart" data-target="{{i.p_id}}">Add to cart</a></div>
+            
+              <button id='{{i.p_id}}minus' class='btn btn-danger minus' style="display: none;" data-target="{{i.p_id}}" onclick="reduce_cart({{i.p_id}})">-</button> <span id='cartvalue{{i.p_id}}' style="display: none;"> 0 </span> <button id='{{i.p_id}}plus' class='btn btn-success plus ' style="display: none;" onclick="increase_cart({{i.p_id}})"> + </button>
+             
+            </div>
+          </div>
+          
+        </div>
+       
+        {% endfor %}
+             
+      </div>
+      
+          </div>
+          
+          {%  endfor %}
+      </div>
+      
     </div>
+    
 </div>
 
-</div>
-</div>
-</div>
 
 {% endblock %}
-
-
 
 {% block js %}
 
 <script>
- 
+
+   
+   
  
   
     $(document).ready(function(){
       update_cart()     
-        var tmp = {{request.session.cart.product.p_id}}
-        console.log(tmp)
+  
   
       $('.add_to_cart').on('click', function(){
         id = $(this).attr('data-target')
-        console.log(id)
         document.getElementById('add_to_cart'+id).style.display = 'none';
         document.getElementById(id+'plus').style.display = 'inline';
         document.getElementById(id+'minus').style.display = 'inline';
@@ -150,9 +183,8 @@
       console.log('data')
       console.log(data)
      $('#cart').text(data);
-     
     }
-    
+  
   })
   }
   
@@ -262,3 +294,5 @@
   </script>
 
 {% endblock %}
+
+

@@ -12,10 +12,10 @@
     <title>Shop</title>
 
 
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="css/simple-sidebar.css" rel="stylesheet">
+  <link href="{% static 'css/simple-sidebar.css' %}" rel="stylesheet">
 
 </head>
 <body>
@@ -28,7 +28,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
       </li>
         {% if user.is_authenticated %}
 
@@ -44,7 +44,7 @@
 
 
             <a class="dropdown-item" href="#">Profile</a>
-            
+            <a class="dropdown-item" href="{% url 'my_orders' %}">My orders</a>
            
               <a href="#" onclick="$('#signOutBtn').click()" class="dropdown-item">Logout</a>
              <form method="post" action="{% url 'logoutuser' %}" style="display: none;">
@@ -95,6 +95,7 @@
     </form>
   </div>
 </nav>
+
 
 
 {% block body %}{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+
+
+{% block body %}
+
+
+
+
+<div class="d-flex my-4" id="wrapper">
+
+    <!-- Sidebar -->
+    {% include 'shop/sidebar.html' %}
+    <!-- /#sidebar-wrapper -->
+  
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="col">
+  
+
+<div class="container my-4">
+    <h3>My Orders</h3>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">OrderId</th>
+        <th scope="col">Date</th>
+        <th scope="col">Items</th>
+        <th scope="col">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>Larry</td>
+        <td>the Bird</td>
+        <td>@twitter</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, Category, SubCategory
 from django.contrib.sessions.models import Session
 from django.template import RequestContext
 import json
@@ -13,14 +13,25 @@ from django.utils import timezone
 
 
 def home(request):
-    beverages = Product.objects.filter(cat__category__name = 'Beverages')
+    beverages = Product.objects.filter(cat__category__name = 'Beverages')[:4]
     pids = Product.objects.values_list('p_id', flat=True)
     pids = list(pids)
     pids = sorted(pids)
     print(pids)
     print(beverages)
+    category = Category.objects.all()
+    category = list(category)
     
-    return render(request, 'shop/home.html', {'beverages':beverages, 'pids':pids})
+    
+    return render(request, 'shop/home.html', {'beverages':beverages, 'pids':pids, 'category':category})
+
+def products(request, sub_category):
+    products = Product.objects.filter(cat__name=sub_category)
+    products = list(products)
+    category = Category.objects.all()
+    category = list(category)
+    return render(request, 'shop/products.html', {'products':products, 'sub_category':sub_category, 'category':category})
+
 
 #SignUp
 def signup(request):
@@ -44,10 +55,9 @@ def logoutuser(request):
         try:
             if request.session['cart']:
                 cart = request.session['cart']
-            logout(request)
-            if cart:
-                request.session['cart'] = cart
-            return redirect('home')
+                logout(request)
+                request.session['cart']= cart
+                return redirect('home')
         except KeyError:
             logout(request)
             return redirect('home')
@@ -271,10 +281,16 @@ def empty_cart(request):
 
 def product_detail(request, productId):
     product = Product.objects.get(p_id = productId)
-    
-    return render(request, 'shop/product_detail.html', {"product":product})
+    category = Category.objects.all()
+    category = list(category)
+    return render(request, 'shop/product_detail.html', {"product":product, 'category':category})
 
-
+def my_orders(request):
+    category = Category.objects.all()
+    category = list(category)
+    orders = Order.objects.filter(u_id=request.user.id)
+    print(list(orders))
+    return render(request, 'shop/my_orders.html', {'category': category})
 
 """def buy_now(request, p_id):
     
@@ -307,3 +323,14 @@ def product_detail(request, productId):
             data = request.session['cart'][p_id]
             return redirect('cart')
 """
+
+def category(request, cat_id):
+     products = Product.objects.filter(cat__category=cat_id)[:4]
+     cats =SubCategory.objects.filter(category=cat_id).values_list('name', flat=True)
+     cats = list(cats)
+     print(cats)
+     products = list(products)
+     print(products)
+     category = Category.objects.all()
+     category = list(category)
+     return render(request, 'shop/category.html', {'products':products, 'category':category, 'cats':cats})
