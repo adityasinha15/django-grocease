@@ -40,6 +40,18 @@ urlpatterns = [
     path('category/<int:cat_id>', views.category, name='category'),
     path('products/<str:sub_category>', views.products, name='products'),
     path('product_detail/<int:productId>', views.product_detail, name='product_detail'),
+     path('delete_key/', views.delete_key, name='delete_key'),
+    path('update_cart/', views.update_cart, name='update_cart'),
+    path('show_quantity_cart/', views.show_quantity_cart, name='show_quantity_cart'),
+    path('cart/', views.cart, name='cart'),
+    path('remove_product/', views.remove_product, name='remove_product'),
+    path('empty_cart/', views.empty_cart, name='empty_cart'),
+    path('my_orders/', views.my_orders, name='my_orders'),
+    #path('buy_now/<int:p_id>', views.buy_now, name='buy_now'),
+    path('category/<int:cat_id>', views.category, name='category'),
+    path('products/<str:sub_category>', views.products, name='products'),
+    path('product_detail/<int:productId>', views.product_detail, name='product_detail'),
+    path('order_detail/<int:o_id>', views.order_detail, name='order_detail'),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

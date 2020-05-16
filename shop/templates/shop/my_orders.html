@@ -34,7 +34,7 @@
     <tbody>
         {% for order, items in items.items %}
       <tr>
-        <a><th scope="row">{{order.o_id}}</th></a>
+         <th scope="row"><a href='{% url "order_detail" order.o_id %}' class="btn btn-primary">{{order.o_id}}</a></th>
         <td>{{order.order_date}}</td>
         <td>{{items|index:0}}.....</td>
         <td>{{order.grand_total}}</td>
@@ -55,10 +55,14 @@
 
 
 <script>
+
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
       });
+
+    
+
 </script>    
 
 {% endblock %}

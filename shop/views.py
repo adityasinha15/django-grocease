@@ -300,6 +300,18 @@ def my_orders(request):
     print(items)
     return render(request, 'shop/my_orders.html', {'category': category, 'orders':orders, 'items':items})
 
+def order_detail(request, o_id):
+    order = Order.objects.get(o_id = o_id)
+    items = dict()
+    for i in order.items.all():
+        p_id = i.p_id
+        name = Product.objects.filter(p_id=p_id).values_list('name', flat=True)[0]
+        items[name] = [i.quantity, i.price]
+    print(items)
+    return render(request, 'shop/order_detail.html', {'order':order, 'items':items})
+
+
+
 """def buy_now(request, p_id):
     
     if request.method == 'POST':
