@@ -67,13 +67,14 @@ TEMPLATES = [
             ],
         },
     },
+    
 ]
 
 WSGI_APPLICATION = 'webapp.wsgi.application'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'adityasinha7927@gmail.com'
+EMAIL_HOST_USER = 'adityasinha1151@gmail.com'
 EMAIL_HOST_PASSWORD = 'aytidA@google#1511'
 EMAIL_PORT = 587
 

@@ -8,8 +8,26 @@ from django.contrib.sessions.models import Session
 from django.template import RequestContext
 import json
 from django.utils import timezone
+from django.core.mail import BadHeaderError, send_mail
+from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 
-
+def send_email(request):
+    subject = 'Verify your account'
+    message = 'Welcome to grocease your otp is 88778'
+    from_email = 'adityasinha1151@gmail.com'
+    if subject and message and from_email:
+        try:
+            send_mail(subject, message=message, from_email=from_email, recipient_list=['adityasinha7927@gmail.com', 'nirmalasinha1211@gmail.com'], fail_silently=False)
+            print('sent')
+        except BadHeaderError:
+            return HttpResponse('Invalid header found.')
+        return HttpResponse('Sent')
+    else:
+        # In reality we'd use a form class
+        # to get proper validation errors.
+        return HttpResponse('Make sure all fields are entered and valid.')
+  
 
 
 def home(request):
@@ -58,11 +76,15 @@ def logoutuser(request):
                 logout(request)
                 request.session['cart']= cart
                 return redirect('home')
+            else:
+                logout(request)
+                return redirect('home')
         except KeyError:
             logout(request)
             return redirect('home')
     else:
         return redirect('home')
+
 def loginuser(request):
     if request.method == 'GET':
         return render(request, 'shop/login.html')
@@ -75,6 +97,7 @@ def loginuser(request):
                 login(request, user)
                 if request.session['cart']:
                     request.session['cart'] = request.session['cart']
+                print(user.is_active())
                 return redirect('home')
             except KeyError:
                 login(request, user)

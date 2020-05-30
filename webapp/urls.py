@@ -52,6 +52,7 @@ urlpatterns = [
     path('products/<str:sub_category>', views.products, name='products'),
     path('product_detail/<int:productId>', views.product_detail, name='product_detail'),
     path('order_detail/<int:o_id>', views.order_detail, name='order_detail'),
+    path('send_email/', views.send_email, name='send_email'),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
